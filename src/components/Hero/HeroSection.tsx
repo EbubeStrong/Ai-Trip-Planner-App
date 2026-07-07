@@ -17,7 +17,8 @@ function Hero() {
     function onSend() {
         if (!message.trim()) return; // Prevent sending if the message is empty 
         if (user) {
-            console.log("User is signed in");
+            router.push('/create-new-trip');
+            // console.log("User is signed in");
         } else {
             router.push("/sign-in");
         }

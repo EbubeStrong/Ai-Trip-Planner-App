@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { ConvexClientProvider } from "./ConvexClientProvider";
+import { ConvexClientProvider } from "../lib/ConvexClientProvider";
 
 const outfit = Outfit({ subsets: ['latin'] })
 

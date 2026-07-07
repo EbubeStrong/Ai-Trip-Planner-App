@@ -2,55 +2,85 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '../ui/button'
 import { SignInButton, useUser } from '@clerk/nextjs'
+import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
+import { Menu } from 'lucide-react'
+import { menuOptions } from '../data';
+import { HeaderMobileNavProps } from '@/types'
 
-const menuOptions = [
-    {
-        name: "Home",
-        path: "/"
-    },
-    {
-        name: "Pricing",
-        path: "/pricing"
-    },
-    {
-        name: "Contact",
-        path: "/contact"
-    }
-]
+function HeaderMobileNav({ isSignedIn }: HeaderMobileNavProps) {
+    return (
+        <Sheet>
+            <SheetTrigger>
+                <Menu className="h-6 w-6 cursor-pointer" />
+            </SheetTrigger>
+
+            <SheetContent side="left">
+                <div className="flex flex-col gap-10 pt-20 items-center h-full">
+                    <div className='flex flex-col justify-center items-center p-5 gap-10'>
+                        {menuOptions.map((menu, index) => (
+                            <Link key={index} href={menu.path} className="text-gray-600 hover:text-gray-900">
+                                <h2 className="text-lg hover:scale-105 transition-all text-primary hover:text-primary/50 duration-500">{menu.name}</h2>
+                            </Link>
+                        ))}
+                    </div>
+
+                    {/* Get Started Btn */}
+                    {!isSignedIn ?
+                        <SignInButton mode="modal">
+                            <Button className="cursor-pointer text-white">
+                                Get Started
+                            </Button>
+                        </SignInButton>
+                        :
+                        <Link href={'/create-new-trip'}>
+                            <Button className="cursor-pointer">Create New Trip</Button>
+                        </Link>
+                    }
+                </div>
+            </SheetContent>
+        </Sheet>
+    );
+}
+
 
 function Header() {
     const { user } = useUser()
     return (
         <header className='flex justify-between items-center p-4 border-b fixed w-full top-0 z-50 bg-white'>
             {/* Logo */}
-            <div className='flex items-center gap-2'>
+            <div className='flex items-center w-full max-w-75 lg:max-w-150 gap-2'>
                 <Image src="/assets/logo.svg" alt="logo" height={30} width={30} />
                 <Link href="/">
                     <h2 className="font-bold text-2xl hover:scale-95 transition-all duration-400 text-primary">AI Trip Planner</h2>
                 </Link>
             </div>
-
             {/* Menu Options */}
-            <div className='flex items-center gap-10'>
-                {menuOptions.map((menu, index) => (
-                    <Link key={index} href={menu.path} className="text-gray-600 hover:text-gray-900">
-                        <h2 className="text-lg hover:scale-105 transition-all text-primary hover:text-primary/50 duration-500">{menu.name}</h2>
+            <div className='hidden md:flex items-center w-full justify-between gap-10'>
+                <div className='flex items-center w-full gap-10'>
+                    {menuOptions.map((menu, index) => (
+                        <Link key={index} href={menu.path} className="text-gray-600 hover:text-gray-900">
+                            <h2 className="text-lg hover:scale-105 transition-all text-primary hover:text-primary/50 duration-500">{menu.name}</h2>
+                        </Link>
+                    ))}
+                </div>
+
+                {/* Get Started Btn */}
+                {!user ?
+                    <SignInButton mode="modal">
+                        <Button className="cursor-pointer text-white">
+                            Get Started
+                        </Button>
+                    </SignInButton>
+                    :
+                    <Link href={'/create-new-trip'}>
+                        <Button className="cursor-pointer">Create New Trip</Button>
                     </Link>
-                ))}
+                }
             </div>
 
-            {/* Get Started Btn */}
-            {!user ?
-                <SignInButton mode="modal">
-                    <Button className="cursor-pointer text-white">
-                        Get Started
-                    </Button>
-                </SignInButton>
-                :
-                <Link href={'/create-trip'}>
-                    <Button className="cursor-pointer">Create New Trip</Button>
-                </Link>
-            }
+            <div className="md:hidden">
+                <HeaderMobileNav isSignedIn={!!user} />
+            </div>
         </header>
     )
 }

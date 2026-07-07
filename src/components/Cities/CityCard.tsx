@@ -1,4 +1,4 @@
-import { CityCardProps } from "@/types/PopularCityListTypes";
+import { CityCardProps } from "@/types/index";
 import Image from "next/image";
 
 export const CityCard = ({ city }: CityCardProps) => {
