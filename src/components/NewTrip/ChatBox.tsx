@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Loader, Send } from "lucide-react";
 import EmptyChatboxDisplayMessage from "./EmptyChatboxDisplay";
 import { Message } from "@/types";
-
+import { ChatBoxBudgetUI, ChatBoxFinalUI, ChatBoxGroupSizeUI, ChatBoxTravelDaysUI } from "./UIChatbox";
+// import ChatBoxGroupSizeUI from "./GroupSizeUI";
 
 
 function ChatBox() {
@@ -13,12 +14,15 @@ function ChatBox() {
     const [userInput, setUserInput] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    async function onSend() {
-        if (!userInput?.trim() || isLoading) return
+    // console.log(messages, "messages");
+
+    async function onSend(input?: string) {
+        const messageToSend = input ?? userInput;
+        if (!messageToSend?.trim() || isLoading) return
 
         const newMessage: Message = {
             role: 'user',
-            content: userInput
+            content: messageToSend
         }
 
         setMessages((prev: Message[]) => [...prev, newMessage])
@@ -60,11 +64,30 @@ function ChatBox() {
     const renderGeneratedUI = (ui: string) => {
         switch (ui) {
             case 'budget':
+                return <ChatBoxBudgetUI onSelectedBudgetOption={(v: string) => { setUserInput(v); onSend(v) }} />
                 // Budget UI Component
-            break;
+                break;
             case 'groupSize':
                 // Group Size UI Component
-            break;
+                return <ChatBoxGroupSizeUI onSelectedOption={(v: string) => { setUserInput(v); onSend(v) }} />;
+            // break;
+            case "tripDuration":
+                return (
+                    <ChatBoxTravelDaysUI
+                        ChatBoxSelectedTravelDayOption={(days: number) => {
+                            const value = `${days} day${days > 1 ? "s" : ""}`;
+
+                            setUserInput(value);
+                            onSend(value);
+                        }}
+                    />
+                );
+            case 'viewTrip':
+                // Final UI for View Trip Component
+                return <ChatBoxFinalUI onSelectedViewTripOption={(v: string) => { setUserInput(v); onSend(v) }} />;
+            // break;
+            default:
+                return null; // Default case if no matching UI is found
         }
     }
 
@@ -88,10 +111,10 @@ function ChatBox() {
     // });
 
     return (
-        <div className="h-[85vh] flex min-h-0 flex-col">
+        <div className="h-[85vh] w-full flex min-h-0 flex-col">
             {/* When messages are empty */}
-            {messages?.length === 0 && 
-            <EmptyChatboxDisplayMessage onSelectOption={(v: string) => {setUserInput(v)}}/>
+            {messages?.length === 0 &&
+                <EmptyChatboxDisplayMessage onSelectOption={(v: string) => { setUserInput(v) }} />
             }
             {/* Display Message */}
             <section className="scrollbar-thin-smooth flex-1 overflow-y-auto p-4 space-y-4">
@@ -99,13 +122,17 @@ function ChatBox() {
                     message.role === 'user' ?
                         <div key={index} className="flex justify-end mt-2">
                             <div className="max-w-lg bg-primary text-white px-4 py-2 rounded-lg">
+                                {/* user message content */}
                                 {message.content}
                             </div>
                         </div>
                         : (
                             <div key={index} className="flex justify-start mt-2">
                                 <div className="max-w-lg bg-gray-100 text-black px-4 py-2 rounded-lg">
+                                    {/* ai message content */}
                                     {message.content}
+                                    {/* Render generated UI based on the 'ui' property */}
+                                    {message?.ui && renderGeneratedUI(message?.ui)}
                                 </div>
                             </div>
                         )
