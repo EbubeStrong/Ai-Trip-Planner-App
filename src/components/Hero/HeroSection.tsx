@@ -26,7 +26,7 @@ function Hero() {
     return (
         <section className="mt-24 w-full flex justify-center">
             {/* Content */}
-            <div className="max-w-3xl w-full mx-auto text-center space-y-6">
+            <div className="px-4 md:px-0 md:max-w-3xl w-full mx-auto text-center space-y-6">
                 <h1 className="text-xl md:text-5xl font-bold">Hey there, I&apos;m your personal
                 </h1>
                 <h1 className="text-xl md:text-5xl font-bold text-primary">
@@ -51,9 +51,10 @@ function Hero() {
                 </div>
 
                 {/* Suggestion List */}
-                <div className="flex gap-5 mx-auto">
+                {/* <div className="flex border gap-5 mx-auto"> */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 mx-auto">
                     {suggestions.map((suggestion, index) => (
-                        <div className="flex flex-col items-center gap-2 h-30 border rounded-2xl cursor-pointer hover:bg-primary/80 transition-all duration-400 hover:text-white p-2" key={index}>
+                        <div className="flex flex-col items-center justify-center gap-2 h-30 border rounded-2xl cursor-pointer hover:bg-primary/80 transition-all duration-400 hover:text-white p-2" key={index}>
                             {suggestion.icon}
                             <h2 className="text-md">{suggestion.title}</h2>
                         </div>

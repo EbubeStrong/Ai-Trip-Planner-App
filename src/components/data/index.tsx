@@ -24,7 +24,7 @@ export const cities = [
         category: "Paris, France",
         title: "Explore the City of Lights - Eiffel Tower, Louvre Museum, and more",
     },
-    
+
     {
         category: "Tokyo, Japan",
         title: "Immerse yourself in the Land of the Rising Sun - Traditional Temples, Modern Districts, and more"
@@ -51,7 +51,7 @@ export const cities = [
 }))
 
 
-export const suggestions:SuggestionsProps[] = [
+export const suggestions: SuggestionsProps[] = [
     {
         title: "Create a New Trip",
         icon: <Globe2 className="text-blue-400 h-5 w-5" />,
@@ -70,7 +70,7 @@ export const suggestions:SuggestionsProps[] = [
     },
 ]
 
-export const menuOptions:MenuOptionsProps[] = [
+export const menuOptions: MenuOptionsProps[] = [
     {
         name: "Home",
         path: "/"
@@ -85,7 +85,7 @@ export const menuOptions:MenuOptionsProps[] = [
     }
 ]
 
-export const SelectTravelsList:SelectListProps[] = [
+export const SelectTravelsList: SelectListProps[] = [
     {
         id: 1,
         title: "Just Me",
@@ -162,16 +162,96 @@ The "ui" field MUST be exactly ONE of the following values:
 - "none" → when no special UI component is required and the user should respond using the normal chat input.
 - "viewTrip" → when all required information has been collected and you are returning the completed trip plan.
 
+Maintain an internal checklist of:
+
+- source
+- destination
+- groupSize
+- budget
+- duration
+- interests
+- specialRequirements
 Rules:
-- Never repeat a UI that has already been answered.
-- After the user answers a UI-based question, move to the next step.
-- If the next question does not require a special UI component, return "ui": "none".
-- Then, once all required information is collected, generate and return ONLY a valid JSON object. Do not include markdown, code fences, or any additional text.
+
+- Before every response, examine the entire conversation.
+- Maintain an internal checklist of the required trip information:
+  - source
+  - destination
+  - groupSize
+  - budget
+  - duration
+  - interests
+  - specialRequirements
+- Extract every piece of trip information the user has already provided, even if it was not in response to your previous question.
+- Users may answer questions out of order.
+- Never ask for information that has already been provided explicitly or can be clearly inferred from the conversation.
+- Accept indirect answers whenever they clearly imply the requested information.
+- If a user's answer is ambiguous, politely ask for clarification instead of making assumptions.
+- Always respond in a way that is relevant to the user's most recent message.
+- Ask exactly one question at a time.
+- Always ask for the first missing required field only.
+- Do not repeat previously asked questions unless the user did not answer or the answer is genuinely unclear.
+- Once all required information has been collected, stop asking questions immediately.
+- Generate the complete trip plan and return it.
+- After the trip plan has been generated, do not ask any more trip-planning questions. If the user asks follow-up questions or requests modifications, update the existing trip plan instead of starting the interview again.
+- Return ONLY a valid JSON object. Do not include markdown, code fences, or explanatory text outside the JSON.
 
 Response schema:
 
 {
   "res": "Text response from the AI Trip Planner Agent",
-  "ui": "groupSize | budget | tripDuration | final"
+  "ui": "groupSize | budget | tripDuration | viewTrip"
+}
+`
+
+export const FINAL_PROMPT = `Generate Travel Plan and give details, give Hotel options list with name, address, price, hotel image url, geo coordinates, rating, descriptions, and suggest itinerary with placeName, Place Details, Place image, geo coordinates, ticket pricing, time travel on each of the location, with each day itinerary, and also give a list of restaurants with name, address, price range, restaurant image url, geo coordinates, rating, descriptions, and suggest a list of activities with name, address, price range, activity image url, geo coordinates, rating, descriptions.
+The response should be in JSON format with the following structure:
+Output Schema:
+{
+  "res": "A friendly, conversational summary message for the user confirming the trip plan has been generated.",
+  "ui": "final",
+  "trip_plan": {
+    "destination": "string",
+    "duration": "string",
+    "origin": "string",
+    "group_size": "string",
+    "budget": "string",
+    "hotels": [
+      {
+        "hotel_name": "string",
+        "hotel_address": "string",
+        "price_per_night": "string",
+        "hotel_image_url": "string",
+        "geo_coordinates": {
+          "latitude": "number",
+          "longitude": "number"
+        },
+        "rating": "number",
+        "description": "string"
+      }
+    ],
+    "itinerary": [
+      {
+        "day": "number",
+        "day_plan": "string",
+        "best_time_to_visit": "string",
+        "activities": [
+          {
+            "place_name": "string",
+            "place_details": "string",
+            "place_image_url": "string",
+            "geo_coordinates": {
+              "latitude": "number",
+              "longitude": "number"
+            },
+            "place_address": "string",
+            "ticket_pricing": "string",
+            "time_travel_each_location": "string",
+            "best_time_to_visit": "string"
+          }
+        ]
+      }
+    ]
+  }
 }
 `

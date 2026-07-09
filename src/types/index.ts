@@ -42,3 +42,14 @@ export type SelectListProps = {
     people?: string;
     color?: string;
 }
+
+export type TripPlanProps = {
+    budget: string;
+    destination: string;
+    duration: string;
+    group_size: string;
+    origin: string;
+    hotels: string[];
+    itinerary: string[]
+    activities?: string[]
+}

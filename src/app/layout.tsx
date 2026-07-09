@@ -25,7 +25,13 @@ export default function RootLayout({
         // className={`min-h-full flex flex-col ${outfit.className}`}
         className={outfit.className}
       >
-        <ClerkProvider>
+        <ClerkProvider
+          publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+          signInUrl="/sign-in"
+          signUpUrl="/sign-up/sign-up"
+          signInFallbackRedirectUrl="/"
+          signUpFallbackRedirectUrl="/"
+        >
           <ConvexClientProvider>
             {children}
           </ConvexClientProvider>

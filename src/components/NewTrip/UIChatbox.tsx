@@ -13,6 +13,7 @@ type ChatBoxSelectedUIProps = {
 
 type ChatBoxViewTripUIProps = {
     onSelectedViewTripOption: (option: string) => void;
+    disableBtn: boolean
 };
 type ChatBoxTravelDaysUIProps = {
     ChatBoxSelectedTravelDayOption: (option: number) => void;
@@ -95,7 +96,7 @@ export const ChatBoxTravelDaysUI = ({ ChatBoxSelectedTravelDayOption }: ChatBoxT
     )
 }
 
-export const ChatBoxFinalUI = ({ onSelectedViewTripOption }: ChatBoxViewTripUIProps) => {
+export const ChatBoxFinalUI = ({ onSelectedViewTripOption, disableBtn }: ChatBoxViewTripUIProps) => {
     return (
         <div className="flex flex-col items-center justify-center mt-6 p-6 bg-white rounded-2xl">
             <Globe2 className="text-primary text-4xl animate-bounce" />
@@ -108,10 +109,14 @@ export const ChatBoxFinalUI = ({ onSelectedViewTripOption }: ChatBoxViewTripUIPr
             <p className="text-gray-500 mb-3 text-sm text-center mt-1">
                 Gathering the best destinations, activities, and travel details for you.
             </p>
-            <Button disabled onClick={() => onSelectedViewTripOption}
+            <Button
+            disabled={disableBtn}
+                onClick={() => onSelectedViewTripOption('View Trip')}
                 className="w-full"
             >View Trip</Button>
         </div>
     );
 }
+
+
 

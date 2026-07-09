@@ -1,10 +1,10 @@
 "use client"
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader, Send } from "lucide-react";
 import EmptyChatboxDisplayMessage from "./EmptyChatboxDisplay";
-import { Message } from "@/types";
+import { Message, TripPlanProps } from "@/types";
 import { ChatBoxBudgetUI, ChatBoxFinalUI, ChatBoxGroupSizeUI, ChatBoxTravelDaysUI } from "./UIChatbox";
 // import ChatBoxGroupSizeUI from "./GroupSizeUI";
 
@@ -13,21 +13,26 @@ function ChatBox() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [userInput, setUserInput] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [tripDetail, setTripDetail] = useState<TripPlanProps | null>(null)
 
-    // console.log(messages, "messages");
+    const lastUi = messages[messages.length - 1]?.ui;
+    const viewTrip = lastUi === "viewTrip" || lastUi === "final";
 
     async function onSend(input?: string) {
         const messageToSend = input ?? userInput;
-        if (!messageToSend?.trim() || isLoading) return
+
+        if (!messageToSend.trim() || isLoading) return;
 
         const newMessage: Message = {
-            role: 'user',
-            content: messageToSend
-        }
+            role: "user",
+            content: messageToSend,
+        };
 
-        setMessages((prev: Message[]) => [...prev, newMessage])
-        setUserInput('')
-        setIsLoading(true)
+        const currentMessages = [...messages, newMessage];
+
+        setMessages(prev => [...prev, newMessage]);
+        setUserInput("");
+        setIsLoading(true);
 
         try {
             const response = await fetch("/api/AI-model", {
@@ -36,8 +41,8 @@ function ChatBox() {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    // messages: message,
-                    messages: [...messages, newMessage],
+                    messages: currentMessages,
+                    viewTrip,
                 }),
             });
 
@@ -46,20 +51,37 @@ function ChatBox() {
             }
 
             const result = await response.json();
+            console.log("TRIP", result)
 
 
-            setMessages((prev: Message[]) => [...prev, {
-                role: 'assistant',
-                content: result?.res,
-                ui: result?.ui
-            }])
-            // console.log(result, "result");
+            const ui = result.ui || "final";
+
+            const assistantMessage: Message = {
+                role: "assistant",
+                content: result.res,
+                ui,
+            };
+
+            setMessages(prev => [...prev, assistantMessage]);
+
+            // Trip is complete.
+            if (ui === "final" || ui === "viewTrip") {
+                // Show your trip UI here if needed.
+                return setUserInput("Ok, Great!"), setTripDetail(result?.trip_plan);
+            }
         } catch (error) {
             console.error(error);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     }
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        onSend();
+    }
+};
 
     const renderGeneratedUI = (ui: string) => {
         switch (ui) {
@@ -82,33 +104,24 @@ function ChatBox() {
                         }}
                     />
                 );
+            // case 'final':
             case 'viewTrip':
                 // Final UI for View Trip Component
-                return <ChatBoxFinalUI onSelectedViewTripOption={(v: string) => { setUserInput(v); onSend(v) }} />;
+                return <ChatBoxFinalUI disableBtn={!tripDetail} onSelectedViewTripOption={(v: string) => { setUserInput(v); onSend(v) }} />;
             // break;
             default:
                 return null; // Default case if no matching UI is found
         }
     }
 
-    // fetch('https://openrouter.ai/api/v1/chat/completions', {
-    //     method: 'POST',
-    //     headers: {
-    //         Authorization: 'Bearer <OPENROUTER_API_KEY>',
-    //         'HTTP-Referer': '<YOUR_SITE_URL>', // Optional. Site URL for rankings on openrouter.ai.
-    //         'X-OpenRouter-Title': '<YOUR_SITE_NAME>', // Optional. Site title for rankings on openrouter.ai.
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //         model: '~openai/gpt-latest',
-    //         messages: [
-    //             {
-    //                 role: 'user',
-    //                 content: 'What is the meaning of life?',
-    //             },
-    //         ],
-    //     }),
-    // });
+    // useEffect(() => {
+    //     if (viewTrip) {
+    //     setUserInput("Ok, Great!");
+    //     onSend();
+    // }
+    // }, [viewTrip]);
+
+
 
     return (
         <div className="h-[85vh] w-full flex min-h-0 flex-col">
@@ -153,6 +166,7 @@ function ChatBox() {
                         placeholder="Create a trip for Lagos Nigeria from New York"
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
+                        onKeyDown={handleKeyDown}
                     />
 
                     <Button disabled={!userInput.trim()} onClick={() => onSend()} className="absolute bottom-6 right-7" size={'icon'}><Send className="h-4 w-4" /></Button>
