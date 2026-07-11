@@ -1,7 +1,7 @@
 "use client"
 import ChatBox from "@/components/NewTrip/ChatBoxContent/ChatBox";
 import { Itinerary } from "@/components/NewTrip/Itinerary/Itinerary";
-import { ChatProvider, useChatContext } from "@/services/context/ChatContext";
+import { ChatProvider, useChatContext } from "@/context/ChatContext";
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 import { MessageCircle } from "lucide-react";
 import { useState } from "react";
@@ -17,7 +17,7 @@ function PageInner() {
                     <ChatBox />
                 </div>
 
-                <div className={!viewTrip ? "hidden col-span-2 lg:block" : "lg:block"}>
+                <div className={!viewTrip ? "hidden col-span-2 lg:block " : "lg:block col-span-2"}>
                     <Itinerary />
                 </div>
             </div>

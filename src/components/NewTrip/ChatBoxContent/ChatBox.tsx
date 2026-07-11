@@ -8,7 +8,7 @@ import { api } from "../../../../convex/_generated/api";
 import { useUserDetails } from "@/lib/provider";
 import { v4 as uuidv4 } from 'uuid';
 import EmptyChatboxDisplayMessage from "./EmptyChatboxDisplay";
-import { useChatContext } from "@/services/context/ChatContext";
+import { useChatContext } from "@/context/ChatContext";
 
 type Message = {
     role: string;
@@ -22,6 +22,8 @@ function ChatBox() {
     const SaveTripDetail = useMutation(api.tripDetail.createTripDetail)
 
     const { userDetails, setUserDetails } = useUserDetails()
+
+    // const {tripDetail, setTripDetail} =
 
     async function onSend(input?: string) {
         const messageToSend = input ?? userInput;
@@ -145,7 +147,7 @@ function ChatBox() {
 
 
     return (
-        <div className="h-[85vh] w-full flex min-h-0 flex-col">
+        <div className="h-screen md:pb-13 w-full flex min-h-0 flex-col">
             {/* When messages are empty */}
             {messages?.length === 0 &&
                 <EmptyChatboxDisplayMessage onSelectOption={(v: string) => { setUserInput(v) }} />
