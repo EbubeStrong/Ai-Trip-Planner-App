@@ -1,8 +1,6 @@
+"use client"
 import { EmptyChatboxDisplayMessageProps } from "@/types";
-import { suggestions } from "../data";
-
-
-
+import { suggestions } from "../../data";
 
 function EmptyChatboxDisplayMessage({ onSelectOption }: EmptyChatboxDisplayMessageProps) {
     return (

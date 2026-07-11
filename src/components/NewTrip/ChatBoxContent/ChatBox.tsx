@@ -1,22 +1,27 @@
 "use client"
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { Textarea } from "../../ui/textarea";
+import { Button } from "../../ui/button";
 import { Loader, Send } from "lucide-react";
-import EmptyChatboxDisplayMessage from "./EmptyChatboxDisplay";
-import { Message, TripPlanProps } from "@/types";
 import { ChatBoxBudgetUI, ChatBoxFinalUI, ChatBoxGroupSizeUI, ChatBoxTravelDaysUI } from "./UIChatbox";
-// import ChatBoxGroupSizeUI from "./GroupSizeUI";
+import { useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useUserDetails } from "@/lib/provider";
+import { v4 as uuidv4 } from 'uuid';
+import EmptyChatboxDisplayMessage from "./EmptyChatboxDisplay";
+import { useChatContext } from "@/services/context/ChatContext";
 
+type Message = {
+    role: string;
+    content: string
+    ui?: string
+}
 
 function ChatBox() {
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [userInput, setUserInput] = useState<string>("");
-    const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [tripDetail, setTripDetail] = useState<TripPlanProps | null>(null)
+    const { messages, setMessages, userInput, setUserInput, isLoading, setIsLoading, tripDetail, setTripDetail, viewTrip } = useChatContext();
 
-    const lastUi = messages[messages.length - 1]?.ui;
-    const viewTrip = lastUi === "viewTrip" || lastUi === "final";
+    const SaveTripDetail = useMutation(api.tripDetail.createTripDetail)
+
+    const { userDetails, setUserDetails } = useUserDetails()
 
     async function onSend(input?: string) {
         const messageToSend = input ?? userInput;
@@ -66,8 +71,24 @@ function ChatBox() {
 
             // Trip is complete.
             if (ui === "final" || ui === "viewTrip") {
-                // Show your trip UI here if needed.
-                return setUserInput("Ok, Great!"), setTripDetail(result?.trip_plan);
+                setUserInput("Ok, Great!");
+                setTripDetail(result.trip_plan);
+
+                if (userDetails) {
+                    const tripId = uuidv4()
+                    const tripDetail = {
+                        ...(result.trip_plan ?? {}),
+                        hotels: result.trip_plan?.hotels?.map((h: unknown) => JSON.stringify(h)) ?? [],
+                        itinerary: result.trip_plan?.itinerary?.map((i: unknown) => JSON.stringify(i)) ?? [],
+                    };
+                    await SaveTripDetail({
+                        tripDetail,
+                        tripId,
+                        userId: userDetails._id,
+                    });
+                }
+
+                return;
             }
         } catch (error) {
             console.error(error);
@@ -77,11 +98,11 @@ function ChatBox() {
     }
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        onSend();
-    }
-};
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            onSend();
+        }
+    };
 
     const renderGeneratedUI = (ui: string) => {
         switch (ui) {

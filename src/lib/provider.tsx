@@ -5,6 +5,7 @@ import { api } from '../../convex/_generated/api';
 import { useMutation } from 'convex/react';
 import { useUser } from '@clerk/nextjs';
 import { UserDetailContext } from '@/services/context/UserDetailContext';
+import { UserDetails } from '@/types';
 
 function Provider({
   children,
@@ -33,23 +34,27 @@ function Provider({
   const createUser = useMutation(api.user.createNewUser);
 
   const { user, isLoaded } = useUser();
-  const [userDetails, setUserDetails] = useState<unknown>(null);
+  const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
   const createNewUser = useCallback(async () => {
-    if (!user) return;
+    if (!user) return null;
 
-    await createUser({
+    const result = await createUser({
       email: user.primaryEmailAddress?.emailAddress ?? "",
       imageUrl: user.imageUrl,
       name: user.fullName ?? "",
     });
+
+    return (result ?? null) as UserDetails | null;
   }, [user, createUser]);
 
   useEffect(() => {
     if (!isLoaded || !user) return;
 
-    void createNewUser();
-  }, [isLoaded, user, createNewUser]);
+    createNewUser().then(result => {
+      if (result) setUserDetails(result);
+    });
+  }, [isLoaded, user, createNewUser, setUserDetails]);
 
   return (
     <UserDetailContext.Provider value={{ userDetails, setUserDetails }}>

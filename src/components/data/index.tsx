@@ -1,5 +1,7 @@
-import { MenuOptionsProps, SelectListProps, SuggestionsProps } from "@/types";
+import { MenuOptionsProps, SelectListProps, SuggestionsProps, TripPlanProps } from "@/types";
 import { Globe, Globe2, Landmark, Plane } from "lucide-react";
+import HotelCard from "../NewTrip/Itinerary/HotelCard";
+import PlaceAreaCard from "../NewTrip/Itinerary/PlaceAreaCard";
 
 export const images = [
     // "https://assets.codepen.io/16327/portrait-image-1.jpg",
@@ -141,6 +143,149 @@ export const SelectBudgetOptions: SelectListProps[] = [
 ]
 
 
+export const MockTripData: TripPlanProps = {
+    "destination": "London",
+    "duration": "1 day",
+    "origin": "New York",
+    "groupSize": "5",
+    "budget": "Moderate",
+    "hotels": [
+        {
+            "hotel_name": "Holiday Inn London - Kensington High Street",
+            "hotel_address": "Wrights Lane, Kensington, London W8 5SP, United Kingdom",
+            "price_per_night": "$180",
+            "hotel_image_url": "https://www.wyndhamhotels.com/-/media/images/hotels/wyndham/hotel-images/the-new-yorker/hotel-hero-banner.png",
+            "geo_coordinates": {
+                "latitude": 51.4996,
+                "longitude": -0.1972
+            },
+            "rating": 4,
+            "description": "A comfortable hotel located in the heart of Kensington, perfect for exploring London's attractions."
+        },
+        {
+            "hotel_name": "Premier Inn London City (Aldgate)",
+            "hotel_address": "66 Alie St, Whitechapel, London E1 8PX, United Kingdom",
+            "price_per_night": "$150",
+            "hotel_image_url": "https://www.wyndhamhotels.com/-/media/images/hotels/wyndham/hotel-images/the-new-yorker/hotel-hero-banner.png",
+            "geo_coordinates": {
+                "latitude": 51.5145,
+                "longitude": -0.0674
+            },
+            "rating": 4.5,
+            "description": "Centrally located and great value for a comfortable stay with modern amenities."
+        }
+    ],
+    "itinerary": [
+        {
+            "day": 1,
+            "plan": "Explore the key landmarks and enjoy a diverse dining experience.",
+            "best_time_to_visit": "Morning to Evening",
+            "activities": [
+                {
+                    "place_name": "The British Museum",
+                    "place_details": "A world-renowned museum showcasing artifacts from various cultures.",
+                    "place_image_url": "https://example.com/britishmuseum.jpg",
+                    "geo_coordinates": {
+                        "latitude": 51.5194,
+                        "longitude": -0.127
+                    },
+                    "place_address": "Great Russell St, Bloomsbury, London WC1B 3DG, United Kingdom",
+                    "ticket_pricing": "Free entry",
+                    "time": "10:00 AM - 1:00 PM",
+                    "best_time_to_visit": "Morning to Evening",
+                },
+                {
+                    "place_name": "Lunch at Dishoom",
+                    "place_details": "A popular Indian restaurant set in a Bombay-style café.",
+                    "place_image_url": "https://example.com/dishoom.jpg",
+                    "geo_coordinates": {
+                        "latitude": 51.5204,
+                        "longitude": -0.1259
+                    },
+                    "place_address": "12 Upper St Martins Ln, London WC2H 9FB, United Kingdom",
+                    "ticket_pricing": "$20 - $40 per person",
+                    "time": "1:30 PM - 2:30 PM",
+                    "best_time_to_visit": "Morning to Evening",
+                },
+                {
+                    "place_name": "Trafalgar Square",
+                    "place_details": "A public square in the City of Westminster, famous for its historical significance.",
+                    "place_image_url": "https://example.com/trafalgar.jpg",
+                    "geo_coordinates": {
+                        "latitude": 51.5089,
+                        "longitude": -0.1283
+                    },
+                    "place_address": "Trafalgar Square, London WC2N 5DN, United Kingdom",
+                    "ticket_pricing": "Free entry",
+                    "time": "3:00 PM - 4:00 PM",
+                    "best_time_to_visit": "Morning to Evening",
+                },
+                {
+                    "place_name": "London Eye",
+                    "place_details": "A giant Ferris wheel offering stunning views of London.",
+                    "place_image_url": "https://example.com/londoneye.jpg",
+                    "geo_coordinates": {
+                        "latitude": 51.5033,
+                        "longitude": -0.1195
+                    },
+                    "place_address": "Lambeth, London SE1 7PB, United Kingdom",
+                    "ticket_pricing": "$30 per person",
+                    "time": "4:30 PM - 5:30 PM",
+                    "best_time_to_visit": "Morning to Evening"
+                },
+                {
+                    "place_name": "Dinner at Flat Iron",
+                    "place_details": "Known for its delicious steak at affordable prices.",
+                    "place_image_url": "https://example.com/flatiron.jpg",
+                    "geo_coordinates": {
+                        "latitude": 51.5105,
+                        "longitude": -0.1134
+                    },
+                    "place_address": "17 Beak St, Carnaby, London W1F 9RW, United Kingdom",
+                    "ticket_pricing": "$20 - $30 per person",
+                    "time": "6:00 PM - 7:30 PM",
+                    "best_time_to_visit": "Morning to Evening",
+                },
+                {
+                    "place_name": "Evening at Soho",
+                    "place_details": "A vibrant area known for nightlife, bars, and entertainment.",
+                    "place_image_url": "https://example.com/soho.jpg",
+                    "geo_coordinates": {
+                        "latitude": 51.5134,
+                        "longitude": -0.1365
+                    },
+                    "place_address": "Soho, London, UK",
+                    "ticket_pricing": "Free entry",
+                    "time": "8:00 PM onwards",
+                    "best_time_to_visit": "Morning to Evening",
+                }
+            ]
+        }
+    ]
+}
+
+export const ItineraryData = [
+    {
+        title: "Recommended Hotels",
+        content: (
+            <div className="flex flex-col lg:flex-row gap-10">
+                {MockTripData?.hotels.map((hotel, index) => (
+                <HotelCard hotel={hotel} index={index} key={index}/>
+                   
+                ))}
+            </div>
+        ),
+    },
+    ...MockTripData?.itinerary.map((dayData) =>
+    ({
+        title: `Day ${dayData?.day} - ${dayData?.plan}`,
+        content: (
+            <PlaceAreaCard dayData={dayData} />
+        )
+    })
+    )
+];
+
 export const PROMPT = `You are an AI Trip Planner Agent. Your goal is to help the user plan a trip by asking one relevant trip-related question at a time. Also correct any word thats not typed correctly and reply with the correct word and the next appropriate question. If user types in a country first, do not go ahead asking other questions till the user answers the country.
 Only ask questions about the following details in order, and wait for the user's answer before asking the next.
 1. Starting location (source)
@@ -204,7 +349,7 @@ Response schema:
 }
 `
 
-export const FINAL_PROMPT = `Generate Travel Plan and give details, give Hotel options list with name, address, price, hotel image url, geo coordinates, rating, descriptions, and suggest itinerary with placeName, Place Details, Place image, geo coordinates, ticket pricing, time travel on each of the location, with each day itinerary, and also give a list of restaurants with name, address, price range, restaurant image url, geo coordinates, rating, descriptions, and suggest a list of activities with name, address, price range, activity image url, geo coordinates, rating, descriptions.
+export const FINAL_PROMPT = `Generate Travel Plan and give details, give Hotel options list with name, address, price, hotel image url, geo coordinates, rating, descriptions, and suggest itinerary with placeName, Place Details, Place image from google map, geo coordinates, ticket pricing, time travel on each of the location, with each day itinerary, and also give a list of restaurants with name, address, price range, restaurant image url, geo coordinates, rating, descriptions, and suggest a list of activities with name, address, price range, activity image url, geo coordinates, rating, descriptions.
 The response should be in JSON format with the following structure:
 Output Schema:
 {
@@ -214,7 +359,7 @@ Output Schema:
     "destination": "string",
     "duration": "string",
     "origin": "string",
-    "group_size": "string",
+    "groupSize": "string",
     "budget": "string",
     "hotels": [
       {
@@ -233,8 +378,8 @@ Output Schema:
     "itinerary": [
       {
         "day": "number",
-        "day_plan": "string",
-        "best_time_to_visit": "string",
+        "plan": "string",
+            "best_time_to_visit": "string",
         "activities": [
           {
             "place_name": "string",
@@ -246,7 +391,7 @@ Output Schema:
             },
             "place_address": "string",
             "ticket_pricing": "string",
-            "time_travel_each_location": "string",
+            "time_travel_for_each_location": "string"
             "best_time_to_visit": "string"
           }
         ]

@@ -1,3 +1,4 @@
+"use client"
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '../ui/button'
@@ -44,7 +45,11 @@ function HeaderMobileNav({ isSignedIn }: HeaderMobileNavProps) {
 
 
 function Header() {
-    const { user } = useUser()
+    const { user, isLoaded } = useUser()
+
+    if (!isLoaded) {
+        return null;
+    }
     return (
         <header className='flex justify-between items-center p-4 border-b fixed w-full top-0 z-50 bg-white'>
             {/* Logo */}

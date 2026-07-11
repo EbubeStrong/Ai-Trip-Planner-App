@@ -1,3 +1,9 @@
-import { createContext } from "react";
+import { createContext, Dispatch, SetStateAction } from "react";
+import { UserDetails } from "@/types";
 
-export const UserDetailContext = createContext<unknown>(null)
+type UserDetailContextType = {
+    userDetails: UserDetails | null;
+    setUserDetails: Dispatch<SetStateAction<UserDetails | null>>;
+};
+
+export const UserDetailContext = createContext<UserDetailContextType | null>(null)

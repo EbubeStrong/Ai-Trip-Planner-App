@@ -1,23 +1,9 @@
+"use client"
 import { Globe2, Minus, Plus } from "lucide-react";
-import { SelectBudgetOptions, SelectTravelsList } from "../data";
+import { SelectBudgetOptions, SelectTravelsList } from "../../data";
 import { Button } from '@/components/ui/button'
 import { useState } from "react";
-
-type ChatBoxSelectedBudgetUIProps = {
-    onSelectedBudgetOption: (option: string) => void;
-};
-
-type ChatBoxSelectedUIProps = {
-    onSelectedOption: (option: string) => void;
-};
-
-type ChatBoxViewTripUIProps = {
-    onSelectedViewTripOption: (option: string) => void;
-    disableBtn: boolean
-};
-type ChatBoxTravelDaysUIProps = {
-    ChatBoxSelectedTravelDayOption: (option: number) => void;
-};
+import { ChatBoxSelectedBudgetUIProps, ChatBoxSelectedUIProps, ChatBoxTravelDaysUIProps, ChatBoxViewTripUIProps } from "@/types";
 
 export const ChatBoxGroupSizeUI = ({ onSelectedOption }: ChatBoxSelectedUIProps) => {
     return (
