@@ -6,6 +6,7 @@ import {
 } from "motion/react";
 import React, { useEffect, useRef, useState } from "react";
 import { Calendar, Users, Wallet } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 interface TimelineEntry {
   title: string;
@@ -24,6 +25,8 @@ export const Timeline = ({ data, tripInfo }: { data: TimelineEntry[]; tripInfo: 
   const ref = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
+  const pathname = usePathname();
+  const isViewTrip = pathname.startsWith("/view-trip");
 
   useEffect(() => {
     if (ref.current) {
@@ -43,8 +46,7 @@ export const Timeline = ({ data, tripInfo }: { data: TimelineEntry[]; tripInfo: 
   return (
     <div
       className="w-full bg-white dark:bg-neutral-950 font-sans h-screen overflow-y-scroll no-scrollbar"
-      ref={containerRef}
-    >
+      ref={containerRef}>
       <div className="mx-auto py-5 px-4 md:px-6">
         <h2 className="text-base sm:text-lg md:text-2xl lg:text-4xl mb-4 text-black dark:text-white max-w-4xl leading-tight">
           Your Trip Itinerary from{" "}<strong className="text-primary">{tripInfo?.origin}</strong>{" "}to{" "}<strong className="text-primary">{tripInfo?.destination}</strong>{" "}is Ready! Here&apos;s a timeline of your trip plan.
@@ -68,24 +70,24 @@ export const Timeline = ({ data, tripInfo }: { data: TimelineEntry[]; tripInfo: 
         </div>
       </div>
 
-      <div ref={ref} className="relative w-full mx-auto pb-20 px-4 md:px-6">
+      <div ref={ref} className="relative w-full mx-auto pb-5 lg:pb-20 px-4 md:px-6">
         {data.map((item, index) => (
           <div
             key={index}
-            className="flex flex-col md:flex-row justify-start pt-8 md:pt-10 mb-3 pb-4 md:gap-10"
+            className={`flex flex-col justify-start pt-8 md:pt-10 mb-3 pb-4 md:gap-10 ${isViewTrip ? " min-[1400px]:flex-row" : "md:flex-row"}`}
           >
-            <div className="sticky z-40 flex items-start gap-4 md:gap-0 top-24 md:top-40 self-start md:w-[40%] lg:w-[35%]">
+            <div className={`min-[1400px]:sticky z-40 flex items-start gap-4 md:gap-0 top-24 md:top-40 self-start min-[1400px]:w-[35%] ${isViewTrip ? "w-full" : "min-[1400px]:w-[35%]"}`}>
               <div className="relative flex items-center justify-center shrink-0">
                 <div className="h-8 w-8 md:h-10 md:w-10 rounded-full bg-white dark:bg-black flex items-center justify-center border-2 border-neutral-300 dark:border-neutral-700 z-10">
                   <div className="h-3 w-3 md:h-4 md:w-4 rounded-full bg-neutral-200 dark:bg-neutral-800" />
                 </div>
               </div>
-              <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-neutral-500 dark:text-neutral-500 md:pl-4">
+              <h3 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold text-neutral-500 dark:text-neutral-500 md:pl-4 mb-5 lg:mb-2 w-full">
                 {item.title}
               </h3>
             </div>
 
-            <div className="relative pl-10 md:pl-4 w-full md:w-[60%] lg:w-[65%] -mt-2 md:mt-0">
+            <div className="relative pl-10 md:pl-4 w-full -mt-2 md:mt-0">
               {item.content}
             </div>
           </div>

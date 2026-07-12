@@ -6,7 +6,7 @@ import { useMutation } from 'convex/react';
 import { useUser } from '@clerk/nextjs';
 import { UserDetailContext } from '@/context/UserDetailContext';
 import { UserDetails } from '@/types';
-import { TripDetailContext } from '@/context/TripDetailContext';
+import { Loader2 } from 'lucide-react';
 
 function Provider({
   children,
@@ -17,7 +17,6 @@ function Provider({
 
   const { user, isLoaded } = useUser();
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
-  const [tripDetail, setTripDetail] = useState<any>(null)
 
   const createNewUser = useCallback(async () => {
     if (!user) return null;
@@ -44,7 +43,13 @@ function Provider({
         <>
           <Header />
           <main className="mt-10">
-            {children}
+            {!isLoaded ? (
+              <div className="flex items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+              </div>
+            ) : (
+              children
+            )}
           </main>
         </>
     </UserDetailContext.Provider>
@@ -57,14 +62,6 @@ export const useUserDetails = () => {
   const context = useContext(UserDetailContext);
   if (!context) {
     throw new Error("useUserDetails must be used within a UserDetailContext.Provider");
-  }
-  return context;
-}
-
-export const useTripDetails = () => {
-  const context = useContext(TripDetailContext);
-  if (!context) {
-    throw new Error("useTripDetails must be used within a UserDetailContext.Provider");
   }
   return context;
 }

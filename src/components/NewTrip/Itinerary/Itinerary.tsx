@@ -1,34 +1,23 @@
 "use client"
+import { useContext } from "react";
 import { Timeline } from "@/components/ui/timeline";
-import HotelCard from "./HotelCard";
-import PlaceAreaCard from "./PlaceAreaCard";
-import { useChatContext } from "@/context/ChatContext";
+import { ChatContext } from "@/context/ChatContext";
+import { ImageSlider } from "@/components/ui/ImageSlider";
+import { TripPlanProps } from "@/types";
+import { ItineraryData } from "@/components/data";
 
-export function Itinerary() {
-    const { tripDetail } = useChatContext();
+export function Itinerary({ tripDetail: propTripDetail }: { tripDetail?: TripPlanProps | null }) {
+    const contextTripDetail = useContext(ChatContext)?.tripDetail ?? null;
 
-    if (!tripDetail) return null;
+    const tripDetail = propTripDetail ?? contextTripDetail;
 
-    const entries = [
-        {
-            title: "Recommended Hotels",
-            content: (
-                <div className="flex flex-col lg:flex-row gap-10">
-                    {tripDetail.hotels?.map((hotel, index) => (
-                        <HotelCard hotel={hotel} index={index} key={index} />
-                    ))}
-                </div>
-            ),
-        },
-        ...(tripDetail.itinerary?.map((dayData) => ({
-            title: `Day ${dayData.day} - ${dayData.plan}`,
-            content: <PlaceAreaCard dayData={dayData} />,
-        })) ?? []),
-    ];
+    if (!tripDetail) return(
+            <ImageSlider />
+    );
 
     return (
         <div className="relative w-full">
-            <Timeline data={entries} tripInfo={tripDetail} />
+            <Timeline data={ItineraryData} tripInfo={tripDetail} />
         </div>
     );
 }
