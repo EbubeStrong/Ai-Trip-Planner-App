@@ -4,7 +4,7 @@ import { suggestions } from "../../data";
 
 function EmptyChatboxDisplayMessage({ onSelectOption }: EmptyChatboxDisplayMessageProps) {
     return (
-        <div className="mt-6">
+        <div className="mt-6 w-full">
             <h2 className="font-bold text-2xl md:text-3xl text-center">Start Planning new <strong className="text-primary">Trip</strong> using AI</h2>
             <p className="text-center text-gray-400 mt-2">Discovering personalized travel itineraries? finding the best destinations and plan your dream vacation effortlessly with the power of A, let our smart assistant do the hard work while you enjoy the journey</p>
 

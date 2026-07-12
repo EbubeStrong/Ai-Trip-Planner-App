@@ -391,7 +391,7 @@ Output Schema:
             },
             "place_address": "string",
             "ticket_pricing": "string",
-            "time_travel_for_each_location": "string"
+            "time": "string"
             "best_time_to_visit": "string"
           }
         ]

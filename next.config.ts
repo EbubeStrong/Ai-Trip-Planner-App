@@ -23,6 +23,14 @@ const nextConfig: NextConfig = {
       },
        {
         protocol: "https",
+        hostname: "media-cdn.tripadvisor.com",
+      },
+       {
+        protocol: "https",
+        hostname: "www.bing.com",
+      },
+       {
+        protocol: "https",
         hostname: "www.wyndhamhotels.com",
       },
       {

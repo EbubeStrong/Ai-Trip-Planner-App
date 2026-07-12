@@ -2,13 +2,15 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { Button } from '../ui/button'
-import { SignInButton, useUser } from '@clerk/nextjs'
+import { SignInButton, UserButton, useUser } from '@clerk/nextjs'
 import { Sheet, SheetContent, SheetTrigger } from '../ui/sheet'
 import { Menu } from 'lucide-react'
 import { menuOptions } from '../data';
 import { HeaderMobileNavProps } from '@/types'
+import { usePathname } from 'next/navigation'
 
 function HeaderMobileNav({ isSignedIn }: HeaderMobileNavProps) {
+
     return (
         <Sheet>
             <SheetTrigger>
@@ -46,6 +48,7 @@ function HeaderMobileNav({ isSignedIn }: HeaderMobileNavProps) {
 
 function Header() {
     const { user, isLoaded } = useUser()
+    const path = usePathname()
 
     if (!isLoaded) {
         return null;
@@ -70,17 +73,27 @@ function Header() {
                 </div>
 
                 {/* Get Started Btn */}
-                {!user ?
-                    <SignInButton mode="modal">
-                        <Button className="cursor-pointer text-white">
-                            Get Started
-                        </Button>
-                    </SignInButton>
-                    :
-                    <Link href={'/create-new-trip'}>
-                        <Button className="cursor-pointer">Create New Trip</Button>
-                    </Link>
-                }
+                <div className="flex gap-5 items-center">
+                    {!user ?
+                        <SignInButton mode="modal">
+                            <Button className="cursor-pointer text-white">
+                                Get Started
+                            </Button>
+                        </SignInButton>
+                        :
+                        path === "/create-new-trip" ? <Link href={'/my-trips'}>
+                            <Button className="cursor-pointer">My Trips</Button>
+                        </Link> :
+                            path.startsWith("/view-trip") ? <Link href={'/my-trips'}>
+                                <Button className="cursor-pointer">View My Trips</Button>
+                            </Link> :
+                                <Link href={'/create-new-trip'}>
+                                    <Button className="cursor-pointer">Create New Trip</Button>
+                                </Link>
+                    }
+
+                    <UserButton />
+                </div>
             </div>
 
             <div className="md:hidden">

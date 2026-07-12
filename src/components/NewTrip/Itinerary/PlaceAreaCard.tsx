@@ -8,15 +8,18 @@ import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useEffect } from "react";
 import axios from "axios";
+import { usePathname } from "next/navigation";
 
 function PlaceAreaCard({dayData}: {dayData: Itinerary}) {
     const storeCachedPhotoUrl = useMutation(api.photoCache.storeCachedPhotoUrl);
+    const pathname = usePathname();
+    const isViewTrip = pathname.startsWith("/view-trip");
 
     return (
         <div>
-            <p className="mb-4">Best Time: {dayData?.best_time_to_visit}</p>
+            <p className="mb-4 font-bold text-primary">Best Time: {dayData?.best_time_to_visit}</p>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className={`grid gap-4 ${isViewTrip ? "grid-cols-1 md:grid-cols-2" : "grid-cols-1 md:grid-cols-2"}`}>
                 {dayData?.activities?.map((activity, index) => (
                     <ActivityCard key={index} activity={activity} storeCachedPhotoUrl={storeCachedPhotoUrl} />
                 ))}
@@ -24,6 +27,7 @@ function PlaceAreaCard({dayData}: {dayData: Itinerary}) {
         </div>
     );
 }
+// ${isViewTrip ? " min-[1400px]:flex-row" : "md:flex-row"}
 
 function ActivityCard({ activity, storeCachedPhotoUrl }: { activity: Activity, storeCachedPhotoUrl: (args: { hotelName: string; photoUrl: string }) => void }) {
     const cachedPhotoUrl = useQuery(api.photoCache.getCachedPhotoUrl, {
@@ -38,6 +42,7 @@ function ActivityCard({ activity, storeCachedPhotoUrl }: { activity: Activity, s
         axios.post('/api/google-place-detail', {
             placeName: activity.place_name
         }).then(result => {
+            console.log(result)
             const url = result?.data?.image;
             if (!ignore && url) {
                 storeCachedPhotoUrl({ hotelName: activity.place_name, photoUrl: url });
@@ -51,7 +56,7 @@ function ActivityCard({ activity, storeCachedPhotoUrl }: { activity: Activity, s
 
     return (
         <div className="flex flex-col items-stretch shadow-md">
-            <Image src={photoUrl ? photoUrl : '/assets/movie-app.jpg'} alt="activity image" width={400} height={400} className="rounded-t-2xl shadow object-cover mb-2 w-full h-48" />
+            <Image src={photoUrl ? photoUrl : '/assets/movie-app.jpg'} alt="activity image" width={400} height={400} className="rounded-t-2xl shadow object-cover mb-2 w-full h-[50vh] border-6" />
             <div className="p-3 flex flex-col gap-2">
                 <h2 className="font-semibold text-lg">{activity?.place_name}</h2>
                 <p className="text-gray-400 line-clamp-2">{activity?.place_details}</p>

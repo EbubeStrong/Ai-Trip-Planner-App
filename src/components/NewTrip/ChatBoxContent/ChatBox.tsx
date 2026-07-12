@@ -8,7 +8,7 @@ import { api } from "../../../../convex/_generated/api";
 import { useUserDetails } from "@/lib/provider";
 import { v4 as uuidv4 } from 'uuid';
 import EmptyChatboxDisplayMessage from "./EmptyChatboxDisplay";
-import { useChatContext } from "@/services/context/ChatContext";
+import { useChatContext } from "@/context/ChatContext";
 
 type Message = {
     role: string;
@@ -16,12 +16,14 @@ type Message = {
     ui?: string
 }
 
-function ChatBox() {
-    const { messages, setMessages, userInput, setUserInput, isLoading, setIsLoading, tripDetail, setTripDetail, viewTrip } = useChatContext();
+function ChatBox({ onMobileDismiss }: { onMobileDismiss?: () => void }) {
+    const { messages, setMessages, userInput, setUserInput, isLoading, setIsLoading, tripDetail, setTripDetail, setTripId, viewTrip } = useChatContext();
 
     const SaveTripDetail = useMutation(api.tripDetail.createTripDetail)
 
     const { userDetails, setUserDetails } = useUserDetails()
+
+    // const {tripDetail, setTripDetail} =
 
     async function onSend(input?: string) {
         const messageToSend = input ?? userInput;
@@ -77,7 +79,11 @@ function ChatBox() {
                 if (userDetails) {
                     const tripId = uuidv4()
                     const tripDetail = {
-                        ...(result.trip_plan ?? {}),
+                        origin: result.trip_plan?.origin ?? "",
+                        destination: result.trip_plan?.destination ?? "",
+                        duration: result.trip_plan?.duration ?? "",
+                        budget: result.trip_plan?.budget ?? "",
+                        groupSize: result.trip_plan?.groupSize ?? "",
                         hotels: result.trip_plan?.hotels?.map((h: unknown) => JSON.stringify(h)) ?? [],
                         itinerary: result.trip_plan?.itinerary?.map((i: unknown) => JSON.stringify(i)) ?? [],
                     };
@@ -86,6 +92,7 @@ function ChatBox() {
                         tripId,
                         userId: userDetails._id,
                     });
+                    setTripId(tripId);
                 }
 
                 return;
@@ -128,24 +135,15 @@ function ChatBox() {
             // case 'final':
             case 'viewTrip':
                 // Final UI for View Trip Component
-                return <ChatBoxFinalUI disableBtn={!tripDetail} onSelectedViewTripOption={(v: string) => { setUserInput(v); onSend(v) }} />;
+                return <ChatBoxFinalUI disableBtn={!tripDetail} onSelectedViewTripOption={(v: string) => { setUserInput(v); onSend(v); onMobileDismiss?.() }} />;
             // break;
             default:
                 return null; // Default case if no matching UI is found
         }
     }
 
-    // useEffect(() => {
-    //     if (viewTrip) {
-    //     setUserInput("Ok, Great!");
-    //     onSend();
-    // }
-    // }, [viewTrip]);
-
-
-
     return (
-        <div className="h-[85vh] w-full flex min-h-0 flex-col">
+        <div className="h-screen px-2 shadow-r-md md:pb-13 w-full flex min-h-0 flex-col">
             {/* When messages are empty */}
             {messages?.length === 0 &&
                 <EmptyChatboxDisplayMessage onSelectOption={(v: string) => { setUserInput(v) }} />

@@ -36,7 +36,7 @@ function HotelCard({ hotel, index }: { hotel: Hotel, index: number }) {
     const photoUrl = cachedPhotoUrl || undefined;
 
     return (
-        <div key={index} className="flex flex-col items-stretch shadow-md">
+        <div key={index} className="flex w-full flex-col items-stretch shadow-md">
             <Image src={photoUrl || '/assets/movie-app.jpg'} alt="hotel image" width={300} height={300} className="rounded-t-2xl shadow object-cover mb-2 w-full h-90" />
             <div className="p-3">
                 <h2 className="font-semibold text-lg">{hotel?.hotel_name}</h2>
