@@ -13,7 +13,6 @@ import {
     PaginationNext,
     PaginationPrevious,
 } from "@/components/ui/pagination";
-import {  ArrowBigRight } from "lucide-react";
 import MyTripCard from "@/components/MyTrips/myTripCard";
 import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
@@ -27,7 +26,7 @@ function MyTrips() {
     const [currentPage, setCurrentPage] = useState<number>(1)
 
     const convex = useConvex()
-    const { userDetails, setUserDetails } = useUserDetails()
+    const { userDetails } = useUserDetails()
 
     useEffect(() => {
         if (!userDetails?._id) return;

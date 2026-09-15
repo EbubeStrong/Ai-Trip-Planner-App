@@ -7,7 +7,7 @@ import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    // 1️⃣ Rate Limit
+    // Rate Limit
     const ip = req.headers.get("x-forwarded-for") ?? "anonymous";
     const { success } = await ratelimit.limit(ip);
 
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Too many requests." }, { status: 429 });
     }
 
-    // 2️⃣ Validate
+    // Validate
     const body = await req.json();
     const parsed = contactSchema.safeParse(body);
 
@@ -28,11 +28,11 @@ export async function POST(req: Request) {
     const { name, email, message } = parsed.data;
     console.log("Contact form submission:", { name, email, messageLength: message.length });
 
-    // 3️⃣ Check env vars
+    // 3. Check env vars
     console.log("RESEND_API_KEY set:", !!process.env.RESEND_API_KEY);
     console.log("CONTACT_EMAIL set:", !!process.env.CONTACT_EMAIL, process.env.CONTACT_EMAIL);
 
-    // 4️⃣ Send notification email
+    //  Send notification email
     console.log("Sending notification email to:", process.env.CONTACT_EMAIL);
     const notificationResult = await resend.emails.send({
       from: "AI Trip Planner <onboarding@resend.dev>",
@@ -42,14 +42,14 @@ export async function POST(req: Request) {
       react: ContactEmail({ name, email, message }),
     });
 
-    console.log("Notification result:", JSON.stringify(notificationResult));
+    // console.log("Notification result:", JSON.stringify(notificationResult));
 
     if (notificationResult.error) {
       console.error("Notification email failed:", JSON.stringify(notificationResult.error));
       return NextResponse.json({ error: "Failed to send message." }, { status: 500 });
     }
 
-    // 5️⃣ Send auto-reply (best effort)
+    //  Send auto-reply (best effort)
     console.log("Sending auto-reply to:", email);
     await resend.emails.send({
       from: "AI Trip Planner <onboarding@resend.dev>",

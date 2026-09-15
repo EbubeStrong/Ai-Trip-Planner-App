@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
       },
        {
         protocol: "https",
-        hostname: "www.bing.com",
+        hostname: "*.bing.com",
       },
        {
         protocol: "https",
