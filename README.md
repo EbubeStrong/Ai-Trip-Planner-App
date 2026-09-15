@@ -87,14 +87,14 @@ Here are some of the key things you can do with AI Trip Planner:
 *   **Place Image & Detail Caching**: Automatically fetches rich details and images for hotels and activities using Google Places and Pexels, caching them for faster future access.
     ```mermaid
     flowchart TD
-        FE[("Frontend (Hotel/Activity Card)")] --> RequestPlace{Request Place Details/Image}
-        RequestPlace --> CheckConvex{Check Convex PhotoCacheTable for Photo URL?}
+        FE["Frontend (Hotel/Activity Card)"] --> RequestPlace{"Request Place Details/Image"}
+        RequestPlace --> CheckConvex{"Check Convex PhotoCacheTable for Photo URL?"}
         CheckConvex -- Cache Hit --> FE
-        CheckConvex -- Cache Miss --> API[Next.js /api/google-place-detail]
-        API --> SearchGoogle[Search Google Places (placeName)]
-        SearchGoogle -- Place Found (ID) --> FetchGoogleDetails[Fetch Google Place Details (place.id)]
-        FetchGoogleDetails -- Details --> FetchPexels[Fetch Pexels Image (placeName)]
-        FetchPexels -- Image URL --> StoreConvex[Store photoUrl in Convex PhotoCacheTable]
+        CheckConvex -- Cache Miss --> API["Next.js /api/google-place-detail"]
+        API --> SearchGoogle["Search Google Places (placeName)"]
+        SearchGoogle -- Place Found (ID) --> FetchGoogleDetails["Fetch Google Place Details (place.id)"]
+        FetchGoogleDetails -- Details --> FetchPexels["Fetch Pexels Image (placeName)"]
+        FetchPexels -- Image URL --> StoreConvex["Store photoUrl in Convex PhotoCacheTable"]
         StoreConvex --> API
         API -- Image + Google Data --> FE
         SearchGoogle -- No Place Found --> API
