@@ -399,4 +399,5 @@ Output Schema:
     ]
   }
 }
+Return ONLY a valid JSON object with the structure above. Do not include markdown, code fences, or explanatory text outside the JSON.
 `

@@ -9,6 +9,7 @@ import { useUserDetails } from "@/lib/provider";
 import { v4 as uuidv4 } from 'uuid';
 import EmptyChatboxDisplayMessage from "./EmptyChatboxDisplay";
 import { useChatContext } from "@/context/ChatContext";
+import { toast } from "sonner";
 
 type Message = {
     role: string;
@@ -21,7 +22,7 @@ function ChatBox({ onMobileDismiss }: { onMobileDismiss?: () => void }) {
 
     const SaveTripDetail = useMutation(api.tripDetail.createTripDetail)
 
-    const { userDetails, setUserDetails } = useUserDetails()
+    const { userDetails } = useUserDetails()
 
     // const {tripDetail, setTripDetail} =
 
@@ -54,6 +55,8 @@ function ChatBox({ onMobileDismiss }: { onMobileDismiss?: () => void }) {
             });
 
             if (!response.ok) {
+                const data = await response.json().catch(() => null);
+                toast.error(data?.error || "Request failed. Please try again.");
                 throw new Error("Request failed");
             }
 
